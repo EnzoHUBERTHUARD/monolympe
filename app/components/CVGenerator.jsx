@@ -117,7 +117,7 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
         method: "POST",
         headers: {
   "Content-Type": "application/json",
-  "x-api-key": "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",
+  "x-api-key": process.env.NEXT_PUBLIC_ANTHROPIC_KEY
   "anthropic-version": "2023-06-01",
   "anthropic-dangerous-direct-browser-access": "true",
 },
