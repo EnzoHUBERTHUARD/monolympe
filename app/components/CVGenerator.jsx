@@ -145,9 +145,7 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
   }
 
   function handlePay() {
-    setShowModal(false);
-    setIsExporting(true);
-    setTimeout(() => { setIsPaid(true); setIsExporting(false); doExport(); }, 1800);
+    window.location.href = "https://buy.stripe.com/test_eVq5kD4zCamicKlduJ77O00";
   }
 
   function doExport() {
