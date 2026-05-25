@@ -113,24 +113,20 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
 {"summary":"accroche 2-3 phrases avec mots-clés ATS","experiences":[{"title":"","company":"","dates":"","description":"bullet points séparés par \\n• "}],"skills":["skill1","skill2"],"education":"formation formatée"}`;
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-  "Content-Type": "application/json",
-  "x-api-key": process.env.NEXT_PUBLIC_ANTHROPIC_KEY,
-  "anthropic-version": "2023-06-01",
-  "anthropic-dangerous-direct-browser-access": "true",
-},
-        body: JSON.stringify({
-          model: "claude-sonnet-4-5",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }],
-        }),
-      });
+     const res = await fetch("/api/generate", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ prompt }),
+});
       const data = await res.json();
-      const text = data.content?.find(b => b.type === "text")?.text || "";
-      const clean = text.replace(/```json|```/g, "").trim();
-      setCvData(JSON.parse(clean));
+console.log("Data reçue:", JSON.stringify(data));
+const text = data.content?.find(b => b.type === "text")?.text || "";
+console.log("Text:", text);
+const clean = text.replace(/```json|```/g, "").trim();
+console.log("Clean:", clean);
+setCvData(JSON.parse(clean));
     } catch (e) {
       setError("Erreur lors de la génération. Réessaie.");
     } finally {
