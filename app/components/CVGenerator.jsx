@@ -184,7 +184,7 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
   }
 
   function handlePay() {
-    window.location.href = "https://buy.stripe.com/test_3csbMi1Rq1Px5d6144";
+    window.location.href = "https://buy.stripe.com/bJefZhf7e6qJ3omc6j7Zu00";
   }
 
   function doExport() {
