@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
@@ -67,6 +67,8 @@ const css = `
   .palette-swatch:hover { transform: scale(1.15); }
   .bg-swatch { width: 28px; height: 28px; border-radius: 6px; cursor: pointer; transition: transform 0.1s; border: 1.5px solid var(--border); }
   .bg-swatch:hover { transform: scale(1.15); }
+  .photo-upload { width: 100%; padding: 12px; border: 2px dashed var(--border); border-radius: 10px; background: var(--paper); cursor: pointer; text-align: center; font-size: 13px; color: var(--muted); transition: border-color 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .photo-upload:hover { border-color: var(--accent); color: var(--accent); }
 `;
 
 const PALETTES = {
@@ -121,8 +123,18 @@ export default function CVGenerator() {
   const [error, setError] = useState("");
   const [palette, setPalette] = useState({ name: "Nuit", bg: "#1a1a2e", accent: "#c8410a" });
   const [bgColor, setBgColor] = useState("#ffffff");
+  const [photo, setPhoto] = useState(null);
+  const photoRef = useRef(null);
 
   const set = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
+
+  function handlePhotoChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setPhoto(ev.target.result);
+    reader.readAsDataURL(file);
+  }
 
   async function handleGenerate() {
     if (!form.firstName || !form.lastName || !form.title || !form.skills) {
@@ -183,17 +195,20 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: 'DM Sans', sans-serif; }
       .cv { display: flex; min-height: 100vh; }
-      .cv-left { width: 35%; background: ${palette.bg}; color: #f5f2ec; padding: 32px 24px; display: flex; flex-direction: column; gap: 24px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cv-left { width: 35%; background: ${palette.bg}; color: #f5f2ec; padding: 32px 24px; display: flex; flex-direction: column; gap: 24px; -webkit-print-color-adjust: exact; print-color-adjust: exact; align-items: center; }
       .cv-right { flex: 1; background: ${bgColor}; padding: 32px 28px; display: flex; flex-direction: column; gap: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .cv-firstname { font-family: 'Instrument Serif', serif; font-size: 22px; line-height: 1.2; }
-      .cv-lastname { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
-      .cv-jobtitle { font-size: 11px; color: ${palette.accent}; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
-      .section-label-left { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: ${palette.accent}; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+      .cv-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid ${palette.accent}; margin-bottom: 8px; }
+      .cv-name-block { text-align: center; width: 100%; }
+      .cv-firstname { font-family: 'Instrument Serif', serif; font-size: 20px; line-height: 1.2; text-align: center; }
+      .cv-lastname { font-family: 'Instrument Serif', serif; font-size: 20px; font-weight: 700; line-height: 1.2; margin-bottom: 6px; text-align: center; }
+      .cv-jobtitle { font-size: 10px; color: ${palette.accent}; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; text-align: center; }
+      .section-label-left { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: ${palette.accent}; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.15); width: 100%; }
       .section-label-right { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: ${palette.accent}; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e8e0d4; }
       .contact-item { font-size: 12px; margin-bottom: 6px; color: #d4cfc6; }
       .edu-item { font-size: 12px; color: #d4cfc6; margin-bottom: 8px; line-height: 1.5; }
       .skill-item { font-size: 12px; color: #d4cfc6; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
       .skill-dot { width: 4px; height: 4px; border-radius: 50%; background: ${palette.accent}; flex-shrink: 0; display: inline-block; }
+      .section-left { width: 100%; }
       .summary { font-size: 13px; line-height: 1.7; color: #3a3733; }
       .exp-item { margin-bottom: 16px; }
       .exp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
@@ -204,26 +219,27 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
     </style></head><body>
     <div class="cv">
       <div class="cv-left">
-        <div>
+        ${photo ? `<img src="${photo}" class="cv-photo" />` : ""}
+        <div class="cv-name-block">
           <div class="cv-firstname">${form.firstName}</div>
           <div class="cv-lastname">${form.lastName}</div>
           <div class="cv-jobtitle">${form.title}</div>
         </div>
-        <div>
+        <div class="section-left">
           <div class="section-label-left">Contact</div>
           ${form.phone ? `<div class="contact-item">📞 ${form.phone}</div>` : ""}
           ${form.email ? `<div class="contact-item">✉ ${form.email}</div>` : ""}
           ${form.location ? `<div class="contact-item">📍 ${form.location}</div>` : ""}
         </div>
         ${(form.education || form.education2 || form.education3) ? `
-        <div>
+        <div class="section-left">
           <div class="section-label-left">Formation</div>
           ${form.education ? `<div class="edu-item">${form.education}</div>` : ""}
           ${form.education2 ? `<div class="edu-item">${form.education2}</div>` : ""}
           ${form.education3 ? `<div class="edu-item">${form.education3}</div>` : ""}
         </div>` : ""}
         ${cvData?.skills?.length ? `
-        <div>
+        <div class="section-left">
           <div class="section-label-left">Compétences</div>
           ${cvData.skills.map(s => `<div class="skill-item"><span class="skill-dot"></span>${s}</div>`).join("")}
         </div>` : ""}
@@ -270,7 +286,6 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
             {/* SÉLECTEUR DE COULEURS */}
             <div style={{marginBottom: 20, background: "var(--paper)", borderRadius: 10, padding: "14px"}}>
               <div style={{fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 12}}>Personnalise ton CV</div>
-              
               <div style={{marginBottom: 12}}>
                 <div style={{fontSize: 11, color: "var(--muted)", marginBottom: 8}}>Couleur principale</div>
                 {Object.entries(PALETTES).map(([cat, pals]) => (
@@ -278,17 +293,8 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
                     <div style={{fontSize: 10, color: "var(--muted)", marginBottom: 5, opacity: 0.7}}>{cat}</div>
                     <div style={{display: "flex", gap: 7, flexWrap: "wrap"}}>
                       {pals.map((p) => (
-                        <div
-                          key={p.name}
-                          onClick={() => setPalette(p)}
-                          title={p.name}
-                          className="palette-swatch"
-                          style={{
-                            background: p.bg,
-                            outline: palette.name === p.name ? `3px solid ${p.accent}` : "3px solid transparent",
-                            outlineOffset: "2px",
-                          }}
-                        >
+                        <div key={p.name} onClick={() => setPalette(p)} title={p.name} className="palette-swatch"
+                          style={{ background: p.bg, outline: palette.name === p.name ? `3px solid ${p.accent}` : "3px solid transparent", outlineOffset: "2px" }}>
                           <div style={{position: "absolute", bottom: 3, right: 3, width: 7, height: 7, borderRadius: "50%", background: p.accent}} />
                         </div>
                       ))}
@@ -296,24 +302,32 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
                   </div>
                 ))}
               </div>
-
-              <div>
+              <div style={{marginBottom: 12}}>
                 <div style={{fontSize: 11, color: "var(--muted)", marginBottom: 8}}>Fond du CV</div>
                 <div style={{display: "flex", gap: 7, flexWrap: "wrap"}}>
                   {BG_OPTIONS.map((bg) => (
-                    <div
-                      key={bg.name}
-                      onClick={() => setBgColor(bg.color)}
-                      title={bg.name}
-                      className="bg-swatch"
-                      style={{
-                        background: bg.color,
-                        outline: bgColor === bg.color ? `3px solid ${palette.accent}` : "3px solid transparent",
-                        outlineOffset: "2px",
-                      }}
-                    />
+                    <div key={bg.name} onClick={() => setBgColor(bg.color)} title={bg.name} className="bg-swatch"
+                      style={{ background: bg.color, outline: bgColor === bg.color ? `3px solid ${palette.accent}` : "3px solid transparent", outlineOffset: "2px" }} />
                   ))}
                 </div>
+              </div>
+
+              {/* PHOTO */}
+              <div>
+                <div style={{fontSize: 11, color: "var(--muted)", marginBottom: 8}}>Photo de profil (optionnel)</div>
+                {photo ? (
+                  <div style={{display: "flex", alignItems: "center", gap: 12}}>
+                    <img src={photo} style={{width: 52, height: 52, borderRadius: "50%", objectFit: "cover", border: `2px solid ${palette.accent}`}} />
+                    <button onClick={() => setPhoto(null)} style={{fontSize: 12, color: "var(--muted)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline"}}>
+                      Supprimer
+                    </button>
+                  </div>
+                ) : (
+                  <div className="photo-upload" onClick={() => photoRef.current.click()}>
+                    📷 Ajouter une photo
+                    <input ref={photoRef} type="file" accept="image/*" style={{display: "none"}} onChange={handlePhotoChange} />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -398,20 +412,23 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
                 )}
                 {hasData && (
                   <div style={{display:"flex", minHeight:"600px", boxShadow:"var(--shadow-lg)", borderRadius:"4px", overflow:"hidden"}}>
-                    <div style={{width:"35%", background:palette.bg, color:"#f5f2ec", padding:"32px 20px", display:"flex", flexDirection:"column", gap:"20px"}}>
-                      <div>
-                        <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"20px", lineHeight:"1.2"}}>{form.firstName}</div>
-                        <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"20px", fontWeight:"700", lineHeight:"1.2", marginBottom:"8px"}}>{form.lastName}</div>
-                        <div style={{fontSize:"10px", color:palette.accent, textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:"600", lineHeight:"1.4"}}>{form.title}</div>
+                    <div style={{width:"35%", background:palette.bg, color:"#f5f2ec", padding:"28px 20px", display:"flex", flexDirection:"column", alignItems:"center", gap:"18px"}}>
+                      {photo && (
+                        <img src={photo} style={{width:80, height:80, borderRadius:"50%", objectFit:"cover", border:`3px solid ${palette.accent}`, flexShrink:0}} />
+                      )}
+                      <div style={{width:"100%"}}>
+                        <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"18px", lineHeight:"1.2", textAlign:"center"}}>{form.firstName}</div>
+                        <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"18px", fontWeight:"700", lineHeight:"1.2", marginBottom:"6px", textAlign:"center"}}>{form.lastName}</div>
+                        <div style={{fontSize:"9px", color:palette.accent, textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:"600", lineHeight:"1.4", textAlign:"center"}}>{form.title}</div>
                       </div>
-                      <div>
+                      <div style={{width:"100%"}}>
                         <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:palette.accent, marginBottom:"8px", paddingBottom:"5px", borderBottom:`1px solid ${palette.accent}44`}}>Contact</div>
                         {form.phone && <div style={{fontSize:"11px", marginBottom:"5px", color:"#d4cfc6"}}>📞 {form.phone}</div>}
                         {form.email && <div style={{fontSize:"11px", marginBottom:"5px", color:"#d4cfc6", wordBreak:"break-all"}}>✉ {form.email}</div>}
                         {form.location && <div style={{fontSize:"11px", color:"#d4cfc6"}}>📍 {form.location}</div>}
                       </div>
                       {(form.education || form.education2 || form.education3) && (
-                        <div>
+                        <div style={{width:"100%"}}>
                           <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:palette.accent, marginBottom:"8px", paddingBottom:"5px", borderBottom:`1px solid ${palette.accent}44`}}>Formation</div>
                           {form.education && <div style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"6px", lineHeight:"1.5"}}>{form.education}</div>}
                           {form.education2 && <div style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"6px", lineHeight:"1.5"}}>{form.education2}</div>}
@@ -419,7 +436,7 @@ Réponds UNIQUEMENT en JSON valide sans backticks:
                         </div>
                       )}
                       {cvData.skills?.length > 0 && (
-                        <div>
+                        <div style={{width:"100%"}}>
                           <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:palette.accent, marginBottom:"8px", paddingBottom:"5px", borderBottom:`1px solid ${palette.accent}44`}}>Compétences</div>
                           {cvData.skills.map((s, i) => (
                             <div key={i} style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"4px", display:"flex", alignItems:"center", gap:"5px"}}>
