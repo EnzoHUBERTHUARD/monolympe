@@ -19,7 +19,7 @@ const css = `
   .brand-badge { margin-left: auto; background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; }
   .form-body { padding: 28px; flex: 1; display: flex; flex-direction: column; }
   .section-title { font-family: 'Instrument Serif', serif; font-size: 22px; letter-spacing: -0.02em; margin-bottom: 4px; }
-  .section-sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .section-sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
   .form-group { margin-bottom: 16px; }
   label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
   input, textarea { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); color: var(--ink); outline: none; resize: none; }
@@ -63,8 +63,44 @@ const css = `
   .gen-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   .gen-text { font-family: 'Instrument Serif', serif; font-size: 18px; }
   .gen-sub { font-size: 13px; color: var(--muted); }
-  .section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--accent-light); }
+  .palette-swatch { width: 28px; height: 28px; border-radius: 6px; cursor: pointer; position: relative; transition: transform 0.1s; }
+  .palette-swatch:hover { transform: scale(1.15); }
+  .bg-swatch { width: 28px; height: 28px; border-radius: 6px; cursor: pointer; transition: transform 0.1s; border: 1.5px solid var(--border); }
+  .bg-swatch:hover { transform: scale(1.15); }
 `;
+
+const PALETTES = {
+  "Classique": [
+    { name: "Nuit", bg: "#1a1a2e", accent: "#c8410a" },
+    { name: "Marine", bg: "#1b2a4a", accent: "#4a9eff" },
+    { name: "Ardoise", bg: "#2a2a2a", accent: "#aaaaaa" },
+    { name: "Bordeaux", bg: "#2e1a1a", accent: "#c84a4a" },
+    { name: "Forêt", bg: "#1a2e1a", accent: "#4caf50" },
+  ],
+  "Moderne": [
+    { name: "Violet", bg: "#2d1b4e", accent: "#b39ddb" },
+    { name: "Terracotta", bg: "#2e1f1a", accent: "#e64a19" },
+    { name: "Pétrole", bg: "#1a2e2e", accent: "#4dd0e1" },
+    { name: "Olive", bg: "#2a2e1a", accent: "#aed581" },
+    { name: "Prune", bg: "#2e1a2e", accent: "#f48fb1" },
+  ],
+  "Pastel": [
+    { name: "Rose", bg: "#3d2a2e", accent: "#f48fb1" },
+    { name: "Ciel", bg: "#1a2a3d", accent: "#81d4fa" },
+    { name: "Sauge", bg: "#1f2e25", accent: "#a5d6a7" },
+    { name: "Pêche", bg: "#3d2e1a", accent: "#ffcc80" },
+    { name: "Lavande", bg: "#2a1a3d", accent: "#ce93d8" },
+  ],
+};
+
+const BG_OPTIONS = [
+  { name: "Blanc", color: "#ffffff" },
+  { name: "Crème", color: "#faf8f4" },
+  { name: "Ivoire", color: "#f5f0e8" },
+  { name: "Gris perle", color: "#f5f5f5" },
+  { name: "Bleu glacé", color: "#f0f4f8" },
+  { name: "Rose poudré", color: "#fdf4f4" },
+];
 
 export default function CVGenerator() {
   const [form, setForm] = useState({
@@ -83,6 +119,8 @@ export default function CVGenerator() {
   const [isPaid, setIsPaid] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState("");
+  const [palette, setPalette] = useState({ name: "Nuit", bg: "#1a1a2e", accent: "#c8410a" });
+  const [bgColor, setBgColor] = useState("#ffffff");
 
   const set = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
 
@@ -93,15 +131,22 @@ export default function CVGenerator() {
     }
     setError("");
     setIsGenerating(true);
-    const prompt = `Tu es un expert RH français. Génère un CV professionnel optimisé ATS.
+    const prompt = `Tu es un expert RH français. Génère un CV professionnel optimisé ATS pour le marché français.
 Données: Nom: ${form.firstName} ${form.lastName}, Poste: ${form.title}, Email: ${form.email}, Tél: ${form.phone}, Ville: ${form.location}
 Exp 1: ${form.exp1Title} chez ${form.exp1Company} (${form.exp1Dates}) — ${form.exp1Desc}
 Exp 2: ${form.exp2Title ? `${form.exp2Title} chez ${form.exp2Company} (${form.exp2Dates}) — ${form.exp2Desc}` : "aucune"}
 Exp 3: ${form.exp3Title ? `${form.exp3Title} chez ${form.exp3Company} (${form.exp3Dates}) — ${form.exp3Desc}` : "aucune"}
 Formation: ${form.education}${form.education2 ? `, ${form.education2}` : ""}${form.education3 ? `, ${form.education3}` : ""}
 Compétences: ${form.skills}, Poste cible: ${form.targetJob || form.title}
-Réponds UNIQUEMENT en JSON valide sans backticks. Sois CONCIS : max 2 phrases pour le profil, max 3 bullet points courts par expérience, max 8 compétences:
-{"summary":"accroche 2 phrases max avec mots-clés ATS","experiences":[{"title":"","company":"","dates":"","description":"bullet points séparés par • "}],"skills":["skill1","skill2"],"education":"formation principale courte"}`;
+
+RÈGLES IMPORTANTES:
+- Le profil doit être personnel, naturel et humain. Max 2-3 phrases à la première personne.
+- Max 3 bullet points COURTS par expérience
+- Max 8 compétences
+- Ton authentique qui correspond à la personnalité du candidat
+
+Réponds UNIQUEMENT en JSON valide sans backticks:
+{"summary":"profil personnel et humain en 2-3 phrases","experiences":[{"title":"","company":"","dates":"","description":"point1 • point2 • point3"}],"skills":["skill1","skill2"],"education":"formation principale"}`;
 
     try {
       const res = await fetch("/api/generate", {
@@ -138,23 +183,23 @@ Réponds UNIQUEMENT en JSON valide sans backticks. Sois CONCIS : max 2 phrases p
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: 'DM Sans', sans-serif; }
       .cv { display: flex; min-height: 100vh; }
-      .cv-left { width: 35%; background: #1a1a2e; color: #f5f2ec; padding: 32px 24px; display: flex; flex-direction: column; gap: 24px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .cv-right { flex: 1; background: #ffffff; padding: 32px 28px; display: flex; flex-direction: column; gap: 20px; }
+      .cv-left { width: 35%; background: ${palette.bg}; color: #f5f2ec; padding: 32px 24px; display: flex; flex-direction: column; gap: 24px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cv-right { flex: 1; background: ${bgColor}; padding: 32px 28px; display: flex; flex-direction: column; gap: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .cv-firstname { font-family: 'Instrument Serif', serif; font-size: 22px; line-height: 1.2; }
       .cv-lastname { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
-      .cv-jobtitle { font-size: 11px; color: #c8410a; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
-      .section-label-left { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #c8410a; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(200,65,10,0.3); }
-      .section-label-right { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #c8410a; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f4e8e2; }
+      .cv-jobtitle { font-size: 11px; color: ${palette.accent}; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+      .section-label-left { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: ${palette.accent}; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+      .section-label-right { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: ${palette.accent}; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e8e0d4; }
       .contact-item { font-size: 12px; margin-bottom: 6px; color: #d4cfc6; }
       .edu-item { font-size: 12px; color: #d4cfc6; margin-bottom: 8px; line-height: 1.5; }
       .skill-item { font-size: 12px; color: #d4cfc6; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
-      .skill-dot { width: 4px; height: 4px; border-radius: 50%; background: #c8410a; flex-shrink: 0; display: inline-block; }
-      .summary { font-size: 13px; line-height: 1.6; color: #3a3733; }
+      .skill-dot { width: 4px; height: 4px; border-radius: 50%; background: ${palette.accent}; flex-shrink: 0; display: inline-block; }
+      .summary { font-size: 13px; line-height: 1.7; color: #3a3733; }
       .exp-item { margin-bottom: 16px; }
       .exp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
       .exp-title { font-weight: 600; font-size: 13px; color: #0f0e0d; }
       .exp-date { font-size: 11px; color: #7a7469; }
-      .exp-company { font-size: 11px; color: #c8410a; margin-bottom: 6px; font-weight: 500; }
+      .exp-company { font-size: 11px; color: ${palette.accent}; margin-bottom: 6px; font-weight: 500; }
       .exp-point { font-size: 12px; line-height: 1.6; color: #4a4643; margin-bottom: 3px; }
     </style></head><body>
     <div class="cv">
@@ -222,6 +267,56 @@ Réponds UNIQUEMENT en JSON valide sans backticks. Sois CONCIS : max 2 phrases p
             <div className="section-title">Crée ton CV pro</div>
             <div className="section-sub">Remplis tes infos · L'IA optimise le texte</div>
 
+            {/* SÉLECTEUR DE COULEURS */}
+            <div style={{marginBottom: 20, background: "var(--paper)", borderRadius: 10, padding: "14px"}}>
+              <div style={{fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 12}}>Personnalise ton CV</div>
+              
+              <div style={{marginBottom: 12}}>
+                <div style={{fontSize: 11, color: "var(--muted)", marginBottom: 8}}>Couleur principale</div>
+                {Object.entries(PALETTES).map(([cat, pals]) => (
+                  <div key={cat} style={{marginBottom: 8}}>
+                    <div style={{fontSize: 10, color: "var(--muted)", marginBottom: 5, opacity: 0.7}}>{cat}</div>
+                    <div style={{display: "flex", gap: 7, flexWrap: "wrap"}}>
+                      {pals.map((p) => (
+                        <div
+                          key={p.name}
+                          onClick={() => setPalette(p)}
+                          title={p.name}
+                          className="palette-swatch"
+                          style={{
+                            background: p.bg,
+                            outline: palette.name === p.name ? `3px solid ${p.accent}` : "3px solid transparent",
+                            outlineOffset: "2px",
+                          }}
+                        >
+                          <div style={{position: "absolute", bottom: 3, right: 3, width: 7, height: 7, borderRadius: "50%", background: p.accent}} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <div style={{fontSize: 11, color: "var(--muted)", marginBottom: 8}}>Fond du CV</div>
+                <div style={{display: "flex", gap: 7, flexWrap: "wrap"}}>
+                  {BG_OPTIONS.map((bg) => (
+                    <div
+                      key={bg.name}
+                      onClick={() => setBgColor(bg.color)}
+                      title={bg.name}
+                      className="bg-swatch"
+                      style={{
+                        background: bg.color,
+                        outline: bgColor === bg.color ? `3px solid ${palette.accent}` : "3px solid transparent",
+                        outlineOffset: "2px",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {error && <div style={{background:"#fef2f2",border:"1px solid #fecaca",borderRadius:8,padding:"10px 14px",fontSize:13,color:"#dc2626",marginBottom:16}}>⚠️ {error}</div>}
             {isPaid && <div className="success-banner">✅ PDF exporté ! Vérifie l'onglet d'impression.</div>}
 
@@ -252,7 +347,7 @@ Réponds UNIQUEMENT en JSON valide sans backticks. Sois CONCIS : max 2 phrases p
             </div>
             <div className="form-row">
               <div className="form-group"><label>Période</label><input placeholder="Janv. 2021 – Juin 2021" value={form.exp2Dates} onChange={set("exp2Dates")} /></div>
-              <div className="form-group"><label>Description (quelques mots-clés suffisent)</label><input placeholder="WordPress, PHP..." value={form.exp2Desc} onChange={set("exp2Desc")} /></div>
+              <div className="form-group"><label>Description</label><input placeholder="Gestion stocks, relation client..." value={form.exp2Desc} onChange={set("exp2Desc")} /></div>
             </div>
 
             <div style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"var(--muted)",margin:"12px 0 12px"}}>Expérience 3 (optionnel)</div>
@@ -262,7 +357,7 @@ Réponds UNIQUEMENT en JSON valide sans backticks. Sois CONCIS : max 2 phrases p
             </div>
             <div className="form-row">
               <div className="form-group"><label>Période</label><input placeholder="Janv. 2020 – Juin 2020" value={form.exp3Dates} onChange={set("exp3Dates")} /></div>
-              <div className="form-group"><label>Description (quelques mots-clés suffisent)</label><input placeholder="Excel, communication..." value={form.exp3Desc} onChange={set("exp3Desc")} /></div>
+              <div className="form-group"><label>Description</label><input placeholder="Excel, communication..." value={form.exp3Desc} onChange={set("exp3Desc")} /></div>
             </div>
 
             <div className="divider" />
@@ -303,62 +398,55 @@ Réponds UNIQUEMENT en JSON valide sans backticks. Sois CONCIS : max 2 phrases p
                 )}
                 {hasData && (
                   <div style={{display:"flex", minHeight:"600px", boxShadow:"var(--shadow-lg)", borderRadius:"4px", overflow:"hidden"}}>
-                    {/* COLONNE GAUCHE */}
-                    <div style={{width:"35%", background:"#1a1a2e", color:"#f5f2ec", padding:"32px 20px", display:"flex", flexDirection:"column", gap:"20px"}}>
+                    <div style={{width:"35%", background:palette.bg, color:"#f5f2ec", padding:"32px 20px", display:"flex", flexDirection:"column", gap:"20px"}}>
                       <div>
                         <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"20px", lineHeight:"1.2"}}>{form.firstName}</div>
                         <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"20px", fontWeight:"700", lineHeight:"1.2", marginBottom:"8px"}}>{form.lastName}</div>
-                        <div style={{fontSize:"10px", color:"#c8410a", textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:"600", lineHeight:"1.4"}}>{form.title}</div>
+                        <div style={{fontSize:"10px", color:palette.accent, textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:"600", lineHeight:"1.4"}}>{form.title}</div>
                       </div>
-
                       <div>
-                        <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"8px", paddingBottom:"5px", borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Contact</div>
+                        <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:palette.accent, marginBottom:"8px", paddingBottom:"5px", borderBottom:`1px solid ${palette.accent}44`}}>Contact</div>
                         {form.phone && <div style={{fontSize:"11px", marginBottom:"5px", color:"#d4cfc6"}}>📞 {form.phone}</div>}
                         {form.email && <div style={{fontSize:"11px", marginBottom:"5px", color:"#d4cfc6", wordBreak:"break-all"}}>✉ {form.email}</div>}
                         {form.location && <div style={{fontSize:"11px", color:"#d4cfc6"}}>📍 {form.location}</div>}
                       </div>
-
                       {(form.education || form.education2 || form.education3) && (
                         <div>
-                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"8px", paddingBottom:"5px", borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Formation</div>
+                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:palette.accent, marginBottom:"8px", paddingBottom:"5px", borderBottom:`1px solid ${palette.accent}44`}}>Formation</div>
                           {form.education && <div style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"6px", lineHeight:"1.5"}}>{form.education}</div>}
                           {form.education2 && <div style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"6px", lineHeight:"1.5"}}>{form.education2}</div>}
                           {form.education3 && <div style={{fontSize:"11px", color:"#d4cfc6", lineHeight:"1.5"}}>{form.education3}</div>}
                         </div>
                       )}
-
                       {cvData.skills?.length > 0 && (
                         <div>
-                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"8px", paddingBottom:"5px", borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Compétences</div>
+                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:palette.accent, marginBottom:"8px", paddingBottom:"5px", borderBottom:`1px solid ${palette.accent}44`}}>Compétences</div>
                           {cvData.skills.map((s, i) => (
                             <div key={i} style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"4px", display:"flex", alignItems:"center", gap:"5px"}}>
-                              <span style={{width:"3px", height:"3px", borderRadius:"50%", background:"#c8410a", flexShrink:0, display:"inline-block"}}></span>
+                              <span style={{width:"3px", height:"3px", borderRadius:"50%", background:palette.accent, flexShrink:0, display:"inline-block"}}></span>
                               {s}
                             </div>
                           ))}
                         </div>
                       )}
                     </div>
-
-                    {/* COLONNE DROITE */}
-                    <div style={{flex:1, background:"#ffffff", padding:"32px 24px", display:"flex", flexDirection:"column", gap:"18px"}}>
+                    <div style={{flex:1, background:bgColor, padding:"32px 24px", display:"flex", flexDirection:"column", gap:"18px"}}>
                       {cvData.summary && (
                         <div>
-                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"8px", paddingBottom:"5px", borderBottom:"1px solid #f4e8e2"}}>Profil</div>
-                          <div style={{fontSize:"12px", lineHeight:"1.6", color:"#3a3733"}}>{cvData.summary}</div>
+                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:palette.accent, marginBottom:"8px", paddingBottom:"5px", borderBottom:`1px solid ${palette.accent}33`}}>Profil</div>
+                          <div style={{fontSize:"12px", lineHeight:"1.7", color:"#3a3733"}}>{cvData.summary}</div>
                         </div>
                       )}
-
                       {cvData.experiences?.length > 0 && (
                         <div>
-                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"10px", paddingBottom:"5px", borderBottom:"1px solid #f4e8e2"}}>Expériences</div>
+                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:palette.accent, marginBottom:"10px", paddingBottom:"5px", borderBottom:`1px solid ${palette.accent}33`}}>Expériences</div>
                           {cvData.experiences.map((exp, i) => (
                             <div key={i} style={{marginBottom:"14px"}}>
                               <div style={{display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"2px"}}>
                                 <span style={{fontWeight:"600", fontSize:"12px", color:"#0f0e0d"}}>{exp.title}</span>
                                 <span style={{fontSize:"10px", color:"#7a7469", whiteSpace:"nowrap", marginLeft:"8px"}}>{exp.dates}</span>
                               </div>
-                              <div style={{fontSize:"10px", color:"#c8410a", marginBottom:"5px", fontWeight:"500"}}>{exp.company}</div>
+                              <div style={{fontSize:"10px", color:palette.accent, marginBottom:"5px", fontWeight:"500"}}>{exp.company}</div>
                               <div style={{fontSize:"11px", lineHeight:"1.6", color:"#4a4643"}}>
                                 {exp.description.split('•').filter(Boolean).map((point, j) => (
                                   <div key={j} style={{marginBottom:"2px"}}>• {point.trim()}</div>
