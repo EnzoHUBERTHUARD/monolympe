@@ -84,8 +84,8 @@ const css = `
     firstName: "", lastName: "", title: "",
     email: "", phone: "", location: "",
     exp1Title: "", exp1Company: "", exp1Dates: "", exp1Desc: "",
-    exp2Title: "", exp2Company: "", exp2Dates: "", exp2Desc: "",
-    education: "", skills: "", targetJob: "",
+    exp2Title: "", exp2Company: "", exp2Dates: "", exp2Desc: "", exp3Title: "", exp3Company: "", exp3Dates: "", exp3Desc: "",
+    education: "", education2: "", education3: "", skills: "", targetJob: "",
   });
 
   const [cvData, setCvData] = useState(null);
@@ -108,9 +108,9 @@ const css = `
 Données: Nom: ${form.firstName} ${form.lastName}, Poste: ${form.title}, Email: ${form.email}, Tél: ${form.phone}, Ville: ${form.location}
 Exp 1: ${form.exp1Title} chez ${form.exp1Company} (${form.exp1Dates}) — ${form.exp1Desc}
 Exp 2: ${form.exp2Title ? `${form.exp2Title} chez ${form.exp2Company} (${form.exp2Dates}) — ${form.exp2Desc}` : "aucune"}
-Formation: ${form.education}, Compétences: ${form.skills}, Poste cible: ${form.targetJob || form.title}
-Réponds UNIQUEMENT en JSON valide sans backticks:
-{"summary":"accroche 2-3 phrases avec mots-clés ATS","experiences":[{"title":"","company":"","dates":"","description":"bullet points séparés par \\n• "}],"skills":["skill1","skill2"],"education":"formation formatée"}`;
+Formation: ${form.education}${form.education2 ? `, ${form.education2}` : ""}${form.education3 ? `, ${form.education3}` : ""}, Compétences: ${form.skills}, Poste cible: ${form.targetJob || form.title}
+Réponds UNIQUEMENT en JSON valide sans backticks. Sois CONCIS : max 2 phrases pour le profil, max 3 bullet points courts par expérience, max 8 compétences:
+{"summary":"accroche 2-3 phrases avec mots-clés ATS","experiences":[{"title":"","company":"","dates":"","Description (quelques mots-clés suffisent)":"bullet points séparés par \\n• "}],"skills":["skill1","skill2"],"education":"formation formatée"}`;
 
     try {
      const res = await fetch("/api/generate", {
@@ -213,7 +213,7 @@ setCvData(JSON.parse(clean));
               <div className="form-group"><label>Prénom *</label><input placeholder="Marie" value={form.firstName} onChange={set("firstName")} /></div>
               <div className="form-group"><label>Nom *</label><input placeholder="Dupont" value={form.lastName} onChange={set("lastName")} /></div>
             </div>
-            <div className="form-group"><label>Poste visé *</label><input placeholder="Développeur Full-Stack" value={form.title} onChange={set("title")} /></div>
+            <div className="form-group"><label>Poste visé *</label><input placeholder="Vendeur, Comptable, Assistant RH..." value={form.title} onChange={set("title")} /></div>
             <div className="form-row">
               <div className="form-group"><label>Email</label><input type="email" placeholder="marie@email.com" value={form.email} onChange={set("email")} /></div>
               <div className="form-group"><label>Téléphone</label><input placeholder="06 00 00 00 00" value={form.phone} onChange={set("phone")} /></div>
@@ -223,26 +223,36 @@ setCvData(JSON.parse(clean));
             <div className="divider" />
             <div style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"var(--muted)",marginBottom:12}}>Expérience 1</div>
             <div className="form-row">
-              <div className="form-group"><label>Poste</label><input placeholder="Dev Frontend" value={form.exp1Title} onChange={set("exp1Title")} /></div>
+              <div className="form-group"><label>Poste</label><input placeholder="Vendeur en magasin" value={form.exp1Title} onChange={set("exp1Title")} /></div>
               <div className="form-group"><label>Entreprise</label><input placeholder="StartupXYZ" value={form.exp1Company} onChange={set("exp1Company")} /></div>
             </div>
             <div className="form-group"><label>Période</label><input placeholder="Janv. 2022 – Aujourd'hui" value={form.exp1Dates} onChange={set("exp1Dates")} /></div>
-            <div className="form-group"><label>Description</label><textarea placeholder="React, APIs REST, +40% perf..." value={form.exp1Desc} onChange={set("exp1Desc")} /></div>
+            <div className="form-group"><label>Description (quelques mots-clés suffisent)</label><textarea placeholder="Accueil clients, gestion caisse, mise en rayon..." value={form.exp1Desc} onChange={set("exp1Desc")} /></div>
 
             <div style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"var(--muted)",margin:"12px 0 12px"}}>Expérience 2 (optionnel)</div>
             <div className="form-row">
-              <div className="form-group"><label>Poste</label><input placeholder="Stage Dev Web" value={form.exp2Title} onChange={set("exp2Title")} /></div>
-              <div className="form-group"><label>Entreprise</label><input placeholder="AgenceABC" value={form.exp2Company} onChange={set("exp2Company")} /></div>
+              <div className="form-group"><label>Poste</label><input placeholder="Stage Commerce" value={form.exp2Title} onChange={set("exp2Title")} /></div>
+              <div className="form-group"><label>Entreprise</label><input placeholder="Entreprise ABC" value={form.exp2Company} onChange={set("exp2Company")} /></div>
             </div>
             <div className="form-row">
-              <div className="form-group"><label>Période</label><input placeholder="Été 2021" value={form.exp2Dates} onChange={set("exp2Dates")} /></div>
-              <div className="form-group"><label>Description</label><input placeholder="WordPress, PHP..." value={form.exp2Desc} onChange={set("exp2Desc")} /></div>
-            </div>
+              <div className="form-group"><label>Période</label><input placeholder="Janv. 2021 – Juin 2021" value={form.exp2Dates} onChange={set("exp2Dates")} /></div>
+              <div className="form-group"><label>Description (quelques mots-clés suffisent)</label><input placeholder="WordPress, PHP..." value={form.exp2Desc} onChange={set("exp2Desc")} /></div>
+            </div><div style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"var(--muted)",margin:"12px 0 12px"}}>Expérience 3 (optionnel)</div>
+<div className="form-row">
+  <div className="form-group"><label>Poste</label><input placeholder="Stage Administratif" value={form.exp3Title} onChange={set("exp3Title")} /></div>
+  <div className="form-group"><label>Entreprise</label><input placeholder="EntrepriseXYZ" value={form.exp3Company} onChange={set("exp3Company")} /></div>
+</div>
+<div className="form-row">
+  <div className="form-group"><label>Période</label><input placeholder="Janv. 2020 – Juin 2020" value={form.exp3Dates} onChange={set("exp3Dates")} /></div>
+  <div className="form-group"><label>Description (quelques mots-clés suffisent)</label><input placeholder="Excel, communication..." value={form.exp3Desc} onChange={set("exp3Desc")} /></div>
+</div>
 
             <div className="divider" />
             <div className="form-group"><label>Formation</label><input placeholder="Licence Info, Univ. Paris — 2021" value={form.education} onChange={set("education")} /></div>
-            <div className="form-group"><label>Compétences * (séparées par virgule)</label><input placeholder="React, Node.js, SQL, Figma" value={form.skills} onChange={set("skills")} /></div>
-            <div className="form-group"><label>Poste cible ATS</label><input placeholder="Alternance Dev React Paris" value={form.targetJob} onChange={set("targetJob")} /></div>
+            <div className="form-group"><label>Formation 2 (optionnel)</label><input placeholder="BTS Commerce — 2019" value={form.education2} onChange={set("education2")} /></div>
+<div className="form-group"><label>Formation 3 (optionnel)</label><input placeholder="Baccalauréat — 2017" value={form.education3} onChange={set("education3")} /></div>
+            <div className="form-group"><label>Tes compétences (ex: Excel, PowerPoint, permis B)</label><input placeholder="Excel, Word, PowerPoint, permis B..." value={form.skills} onChange={set("skills")} /></div>
+            <div className="form-group"><label>Poste que tu recherches</label><input placeholder="Alternance Commerce Paris" value={form.targetJob} onChange={set("targetJob")} /></div>
 
             <button className="btn-generate" onClick={handleGenerate} disabled={isGenerating}>
               {isGenerating ? <><div className="spinner" /> Génération en cours...</> : "✦ Générer mon CV avec l'IA"}
@@ -293,7 +303,11 @@ setCvData(JSON.parse(clean));
                             <div key={i} className="cv-exp-item">
                               <div className="cv-exp-header"><span className="cv-job-title">{exp.title}</span><span className="cv-job-date">{exp.dates}</span></div>
                               <div className="cv-company">{exp.company}</div>
-                              <div className="cv-exp-desc">• {exp.description}</div>
+                              <div className="cv-exp-desc">
+  {exp.description.split('•').filter(Boolean).map((point, i) => (
+    <div key={i} style={{marginBottom: '4px'}}>• {point.trim()}</div>
+  ))}
+</div>
                             </div>
                           ))}
                         </div>
@@ -339,3 +353,4 @@ setCvData(JSON.parse(clean));
     </>
   );
 }
+
