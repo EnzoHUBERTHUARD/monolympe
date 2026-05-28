@@ -12,16 +12,12 @@ const css = `
   }
   html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--ink); }
-
-  /* NAV */
   .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
   .nav-logo { font-family: 'Instrument Serif', serif; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
   .nav-cta { padding: 9px 20px; background: var(--ink); color: var(--paper); border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; }
   .nav-cta:hover { background: #222; }
-
-  /* HERO */
   .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 40px 60px; background: var(--paper); }
-  .hero-inner { max-width: 900px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .hero-inner { max-width: 1000px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
   .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-light); color: var(--accent); font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 20px; }
   .hero-title { font-family: 'Instrument Serif', serif; font-size: 52px; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
   .hero-title span { color: var(--accent); font-style: italic; }
@@ -29,22 +25,6 @@ const css = `
   .hero-cta { display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; background: var(--ink); color: var(--paper); border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; text-decoration: none; letter-spacing: -0.01em; transition: transform 0.12s, background 0.15s; }
   .hero-cta:hover { background: #222; transform: translateY(-2px); }
   .hero-cta-sub { font-size: 13px; color: var(--muted); margin-top: 10px; }
-  .hero-img { position: relative; }
-  .cv-mockup { width: 100%; border-radius: 8px; box-shadow: 0 20px 60px rgba(15,14,13,0.2); overflow: hidden; }
-  .cv-mockup-header { background: var(--dark); padding: 24px 20px 18px; }
-  .cv-mockup-name { font-family: 'Instrument Serif', serif; font-size: 22px; color: #f5f2ec; margin-bottom: 4px; }
-  .cv-mockup-title { font-size: 10px; color: #c8410a; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
-  .cv-mockup-body { background: white; padding: 18px 20px; }
-  .cv-mockup-label { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #c8410a; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #f4e8e2; }
-  .cv-mockup-text { font-size: 10px; line-height: 1.6; color: #4a4643; margin-bottom: 12px; }
-  .cv-mockup-exp { margin-bottom: 8px; }
-  .cv-mockup-exp-title { font-weight: 600; font-size: 10px; color: #0f0e0d; }
-  .cv-mockup-exp-co { font-size: 9px; color: #c8410a; margin-bottom: 3px; }
-  .cv-mockup-point { font-size: 9px; color: #4a4643; margin-bottom: 2px; }
-  .cv-mockup-skills { display: flex; flex-wrap: wrap; gap: 4px; }
-  .cv-mockup-skill { background: #f5f2ec; border: 1px solid #d4cfc6; padding: 2px 7px; border-radius: 10px; font-size: 9px; }
-
-  /* HOW IT WORKS */
   .how { padding: 80px 40px; background: var(--white); }
   .how-inner { max-width: 860px; margin: 0 auto; }
   .section-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 14px; }
@@ -55,8 +35,6 @@ const css = `
   .step-num { width: 40px; height: 40px; background: var(--ink); color: var(--paper); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Instrument Serif', serif; font-size: 20px; }
   .step-title { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
   .step-desc { font-size: 14px; line-height: 1.6; color: var(--muted); }
-
-  /* TESTIMONIALS */
   .testimonials { padding: 80px 40px; background: var(--paper); }
   .testimonials-inner { max-width: 860px; margin: 0 auto; }
   .testimonials-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 48px; }
@@ -67,8 +45,6 @@ const css = `
   .testimonial-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--dark); display: flex; align-items: center; justify-content: center; color: var(--paper); font-size: 14px; font-weight: 600; flex-shrink: 0; }
   .testimonial-name { font-weight: 600; font-size: 13px; }
   .testimonial-role { font-size: 12px; color: var(--muted); }
-
-  /* PRICING */
   .pricing { padding: 80px 40px; background: var(--white); }
   .pricing-inner { max-width: 500px; margin: 0 auto; text-align: center; }
   .pricing-card { background: var(--dark); border-radius: 20px; padding: 40px; margin-top: 40px; color: var(--paper); }
@@ -80,12 +56,9 @@ const css = `
   .pricing-cta { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: -0.01em; transition: background 0.15s, transform 0.12s; text-decoration: none; display: block; text-align: center; }
   .pricing-cta:hover { background: #b03508; transform: translateY(-1px); }
   .pricing-secure { font-size: 12px; color: #a09890; margin-top: 14px; }
-
-  /* FOOTER */
   .footer { padding: 32px 40px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
   .footer-logo { font-family: 'Instrument Serif', serif; font-size: 18px; color: var(--ink); }
   .footer-text { font-size: 13px; color: var(--muted); }
-
   @media (max-width: 768px) {
     .hero-inner { grid-template-columns: 1fr; gap: 40px; }
     .hero-title { font-size: 36px; }
@@ -96,6 +69,102 @@ const css = `
     .how, .testimonials, .pricing { padding: 60px 20px; }
   }
 `;
+
+// Faux avatar SVG en base64
+const AVATAR_SVG = `data:image/svg+xml;base64,${btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#2d4a7a"/>
+  <circle cx="50" cy="38" r="18" fill="#a8c4e0"/>
+  <ellipse cx="50" cy="85" rx="28" ry="20" fill="#a8c4e0"/>
+</svg>`)}`;
+
+function CVMockup() {
+  return (
+    <div style={{width:"100%", borderRadius:10, boxShadow:"0 20px 60px rgba(15,14,13,0.2)", overflow:"hidden", fontFamily:"'DM Sans', sans-serif"}}>
+      <div style={{display:"flex"}}>
+        {/* Colonne gauche */}
+        <div style={{width:"38%", background:"#1a1a2e", padding:"24px 18px", display:"flex", flexDirection:"column", alignItems:"center", gap:"16px"}}>
+          {/* Photo */}
+          <div style={{width:72, height:72, borderRadius:"50%", background:"#2d4a7a", border:"3px solid #c8410a", overflow:"hidden", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center"}}>
+            <svg viewBox="0 0 100 100" width="72" height="72" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100" height="100" fill="#2d4a7a"/>
+              <circle cx="50" cy="38" r="18" fill="#a8c4e0"/>
+              <ellipse cx="50" cy="88" rx="32" ry="22" fill="#a8c4e0"/>
+            </svg>
+          </div>
+          {/* Nom */}
+          <div style={{textAlign:"center", width:"100%"}}>
+            <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"15px", color:"#f5f2ec", lineHeight:1.2}}>Sophie</div>
+            <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"15px", fontWeight:700, color:"#f5f2ec", lineHeight:1.2, marginBottom:5}}>MARTIN</div>
+            <div style={{fontSize:"8px", color:"#c8410a", textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:600, lineHeight:1.4}}>Alternance Ressources Humaines</div>
+          </div>
+          {/* Contact */}
+          <div style={{width:"100%"}}>
+            <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:6, paddingBottom:4, borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Contact</div>
+            <div style={{fontSize:"9px", color:"#d4cfc6", marginBottom:3}}>✉ sophie.martin@gmail.com</div>
+            <div style={{fontSize:"9px", color:"#d4cfc6", marginBottom:3}}>📞 06 12 34 56 78</div>
+            <div style={{fontSize:"9px", color:"#d4cfc6"}}>📍 Lyon, 69000</div>
+          </div>
+          {/* Formation */}
+          <div style={{width:"100%"}}>
+            <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:6, paddingBottom:4, borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Formation</div>
+            <div style={{fontSize:"9px", color:"#d4cfc6", marginBottom:4, lineHeight:1.5}}>BTS Gestion PME<br/><span style={{opacity:0.7}}>Lycée Saint-Exupéry, Lyon · 2022-2023</span></div>
+            <div style={{fontSize:"9px", color:"#d4cfc6", lineHeight:1.5}}>Bac Pro Gestion Admin.<br/><span style={{opacity:0.7}}>Lycée Lumière, Lyon · 2020-2022</span></div>
+          </div>
+          {/* Compétences */}
+          <div style={{width:"100%"}}>
+            <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:6, paddingBottom:4, borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Compétences</div>
+            {["Pack Office (Excel, Word)", "Gestion administrative", "Relation client", "Organisation & rigueur", "Travail en équipe"].map(s => (
+              <div key={s} style={{fontSize:"9px", color:"#d4cfc6", marginBottom:3, display:"flex", alignItems:"center", gap:4}}>
+                <span style={{width:3, height:3, borderRadius:"50%", background:"#c8410a", display:"inline-block", flexShrink:0}}></span>
+                {s}
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Colonne droite */}
+        <div style={{flex:1, background:"white", padding:"22px 18px", display:"flex", flexDirection:"column", gap:"13px"}}>
+          {/* Profil */}
+          <div>
+            <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:5, paddingBottom:3, borderBottom:"1px solid #f4e8e2"}}>Profil</div>
+            <div style={{fontSize:"9px", lineHeight:1.65, color:"#3a3733"}}>Étudiante en BTS Gestion PME, je recherche une alternance en RH pour développer mes compétences en gestion du personnel et administration. Mon sens de l'organisation et mon aisance relationnelle me permettent de m'adapter rapidement.</div>
+          </div>
+          {/* Expériences */}
+          <div>
+            <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:6, paddingBottom:3, borderBottom:"1px solid #f4e8e2"}}>Expériences</div>
+            <div style={{marginBottom:9}}>
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"baseline"}}>
+                <span style={{fontWeight:600, fontSize:"9px", color:"#0f0e0d"}}>Assistante Administrative</span>
+                <span style={{fontSize:"8px", color:"#7a7469"}}>Sept. 2022 – Juin 2023</span>
+              </div>
+              <div style={{fontSize:"8px", color:"#c8410a", marginBottom:3, fontWeight:500}}>Cabinet Dubois & Associés · Lyon</div>
+              <div style={{fontSize:"8px", color:"#4a4643", marginBottom:1}}>• Gestion des dossiers clients et archivage</div>
+              <div style={{fontSize:"8px", color:"#4a4643", marginBottom:1}}>• Accueil physique et standard téléphonique</div>
+              <div style={{fontSize:"8px", color:"#4a4643"}}>• Rédaction de courriers et suivi des contrats</div>
+            </div>
+            <div style={{marginBottom:9}}>
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"baseline"}}>
+                <span style={{fontWeight:600, fontSize:"9px", color:"#0f0e0d"}}>Vendeuse — Stage</span>
+                <span style={{fontSize:"8px", color:"#7a7469"}}>Avr. – Juin 2022</span>
+              </div>
+              <div style={{fontSize:"8px", color:"#c8410a", marginBottom:3, fontWeight:500}}>Fnac · Centre Commercial La Part-Dieu</div>
+              <div style={{fontSize:"8px", color:"#4a4643", marginBottom:1}}>• Conseil et vente auprès de la clientèle</div>
+              <div style={{fontSize:"8px", color:"#4a4643"}}>• Gestion des stocks et mise en rayon</div>
+            </div>
+            <div>
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"baseline"}}>
+                <span style={{fontWeight:600, fontSize:"9px", color:"#0f0e0d"}}>Hôtesse d'accueil — Stage</span>
+                <span style={{fontSize:"8px", color:"#7a7469"}}>Juin 2021</span>
+              </div>
+              <div style={{fontSize:"8px", color:"#c8410a", marginBottom:3, fontWeight:500}}>Mairie de Lyon · 3ème arrondissement</div>
+              <div style={{fontSize:"8px", color:"#4a4643", marginBottom:1}}>• Orientation et renseignement du public</div>
+              <div style={{fontSize:"8px", color:"#4a4643"}}>• Gestion du courrier entrant et sortant</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -110,13 +179,11 @@ export default function LandingPage() {
     <>
       <style>{css}</style>
 
-      {/* NAV */}
       <nav className="nav" style={{boxShadow: scrolled ? "0 2px 20px rgba(15,14,13,0.08)" : "none"}}>
         <a href="/" className="nav-logo">MonOlympe</a>
         <a href="/cv" className="nav-cta">Créer mon CV →</a>
       </nav>
 
-      {/* HERO */}
       <section className="hero">
         <div className="hero-inner">
           <div>
@@ -127,66 +194,15 @@ export default function LandingPage() {
             <p className="hero-sub">
               Remplis tes infos, l'IA rédige et optimise ton CV pour les recruteurs français. Sans compte, sans prise de tête.
             </p>
-            <a href="/cv" className="hero-cta">
-              ✦ Créer mon CV maintenant
-            </a>
+            <a href="/cv" className="hero-cta">✦ Créer mon CV maintenant</a>
             <p className="hero-cta-sub">Gratuit pour générer · 4,99 € pour exporter en PDF</p>
           </div>
-          <div className="hero-img">
-            <div className="cv-mockup">
-              <div style={{display:"flex"}}>
-                <div style={{width:"38%", background:"#1a1a2e", padding:"20px 16px", display:"flex", flexDirection:"column", gap:"14px"}}>
-                  <div>
-                    <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"16px", color:"#f5f2ec", lineHeight:1.2}}>Sophie</div>
-                    <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"16px", fontWeight:700, color:"#f5f2ec", lineHeight:1.2, marginBottom:4}}>MARTIN</div>
-                    <div style={{fontSize:"8px", color:"#c8410a", textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:600}}>Alternance RH</div>
-                  </div>
-                  <div>
-                    <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:6, paddingBottom:4, borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Contact</div>
-                    <div style={{fontSize:"9px", color:"#d4cfc6", marginBottom:3}}>✉ sophie@email.com</div>
-                    <div style={{fontSize:"9px", color:"#d4cfc6", marginBottom:3}}>📞 06 00 00 00 00</div>
-                    <div style={{fontSize:"9px", color:"#d4cfc6"}}>📍 Lyon</div>
-                  </div>
-                  <div>
-                    <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:6, paddingBottom:4, borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Formation</div>
-                    <div style={{fontSize:"9px", color:"#d4cfc6", marginBottom:3, lineHeight:1.4}}>BTS GESTION — 2023</div>
-                    <div style={{fontSize:"9px", color:"#d4cfc6", lineHeight:1.4}}>BAC PRO — 2021</div>
-                  </div>
-                  <div>
-                    <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:6, paddingBottom:4, borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Compétences</div>
-                    {["Pack Office", "Relation client", "Organisation", "Rigueur"].map(s => (
-                      <div key={s} style={{fontSize:"9px", color:"#d4cfc6", marginBottom:3, display:"flex", alignItems:"center", gap:4}}>
-                        <span style={{width:3, height:3, borderRadius:"50%", background:"#c8410a", display:"inline-block"}}></span>
-                        {s}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div style={{flex:1, background:"white", padding:"20px 16px", display:"flex", flexDirection:"column", gap:"12px"}}>
-                  <div>
-                    <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:5, paddingBottom:3, borderBottom:"1px solid #f4e8e2"}}>Profil</div>
-                    <div style={{fontSize:"9px", lineHeight:1.6, color:"#3a3733"}}>Étudiante en BTS Gestion, je recherche une alternance RH pour mettre en pratique mes compétences organisationnelles et mon sens du contact.</div>
-                  </div>
-                  <div>
-                    <div style={{fontSize:"8px", fontWeight:700, textTransform:"uppercase", color:"#c8410a", marginBottom:5, paddingBottom:3, borderBottom:"1px solid #f4e8e2"}}>Expériences</div>
-                    <div style={{marginBottom:8}}>
-                      <div style={{display:"flex", justifyContent:"space-between"}}>
-                        <span style={{fontWeight:600, fontSize:"9px"}}>Assistante Administrative</span>
-                        <span style={{fontSize:"8px", color:"#7a7469"}}>2022-2023</span>
-                      </div>
-                      <div style={{fontSize:"8px", color:"#c8410a", marginBottom:2}}>Cabinet Dubois</div>
-                      <div style={{fontSize:"8px", color:"#4a4643"}}>• Gestion des dossiers clients</div>
-                      <div style={{fontSize:"8px", color:"#4a4643"}}>• Accueil et standard téléphonique</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div>
+            <img src="/images/cv-demo.png" style={{width:"100%", borderRadius:"10px", boxShadow:"0 20px 60px rgba(15,14,13,0.2)"}} />
           </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
       <section className="how">
         <div className="how-inner">
           <div className="section-badge">⚡ Simple et rapide</div>
@@ -212,7 +228,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
       <section className="testimonials">
         <div className="testimonials-inner">
           <div className="section-badge">💬 Ils nous font confiance</div>
@@ -255,7 +270,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* PRICING */}
       <section className="pricing">
         <div className="pricing-inner">
           <div className="section-badge">💸 Simple et transparent</div>
@@ -285,7 +299,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="footer">
         <span className="footer-logo">MonOlympe</span>
         <span className="footer-text">© 2025 MonOlympe · Fait avec ❤️ en France</span>
@@ -293,3 +306,4 @@ export default function LandingPage() {
     </>
   );
 }
+
