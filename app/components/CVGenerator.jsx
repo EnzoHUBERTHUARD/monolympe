@@ -39,22 +39,6 @@ const css = `
   .btn-export:hover { background: #b03508; }
   .btn-export:disabled { opacity: 0.4; cursor: not-allowed; }
   .preview-scroll { flex: 1; overflow-y: auto; padding: 28px 24px; display: flex; justify-content: center; }
-  .cv-doc { width: 100%; max-width: 600px; background: var(--white); border-radius: 4px; box-shadow: var(--shadow-lg); overflow: hidden; }
-  .cv-header { background: var(--ink); color: var(--paper); padding: 36px 40px 28px; }
-  .cv-name { font-family: 'Instrument Serif', serif; font-size: 34px; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 4px; }
-  .cv-title-text { font-size: 14px; color: #a09890; margin-bottom: 18px; }
-  .cv-contacts { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #c8c0b8; }
-  .cv-body { padding: 32px 40px; display: flex; flex-direction: column; gap: 24px; }
-  .cv-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--accent-light); }
-  .cv-summary { font-size: 13.5px; line-height: 1.65; color: #3a3733; }
-  .cv-exp-item { margin-bottom: 16px; }
-  .cv-exp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
-  .cv-job-title { font-weight: 600; font-size: 14px; }
-  .cv-job-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
-  .cv-company { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .cv-exp-desc { font-size: 12.5px; line-height: 1.6; color: #4a4643; }
-  .cv-skills-grid { display: flex; flex-wrap: wrap; gap: 7px; }
-  .cv-skill-tag { background: var(--cream); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
   .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; color: var(--muted); gap: 12px; padding: 40px; }
   .empty-icon { font-size: 48px; opacity: 0.3; }
   .empty-text { font-family: 'Instrument Serif', serif; font-size: 22px; color: var(--ink); opacity: 0.35; }
@@ -79,13 +63,18 @@ const css = `
   .gen-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   .gen-text { font-family: 'Instrument Serif', serif; font-size: 18px; }
   .gen-sub { font-size: 13px; color: var(--muted); }
-`;export default function CVGenerator() {
+  .section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--accent-light); }
+`;
+
+export default function CVGenerator() {
   const [form, setForm] = useState({
     firstName: "", lastName: "", title: "",
     email: "", phone: "", location: "",
     exp1Title: "", exp1Company: "", exp1Dates: "", exp1Desc: "",
-    exp2Title: "", exp2Company: "", exp2Dates: "", exp2Desc: "", exp3Title: "", exp3Company: "", exp3Dates: "", exp3Desc: "",
-    education: "", education2: "", education3: "", skills: "", targetJob: "",
+    exp2Title: "", exp2Company: "", exp2Dates: "", exp2Desc: "",
+    exp3Title: "", exp3Company: "", exp3Dates: "", exp3Desc: "",
+    education: "", education2: "", education3: "",
+    skills: "", targetJob: "",
   });
 
   const [cvData, setCvData] = useState(null);
@@ -108,25 +97,22 @@ const css = `
 Données: Nom: ${form.firstName} ${form.lastName}, Poste: ${form.title}, Email: ${form.email}, Tél: ${form.phone}, Ville: ${form.location}
 Exp 1: ${form.exp1Title} chez ${form.exp1Company} (${form.exp1Dates}) — ${form.exp1Desc}
 Exp 2: ${form.exp2Title ? `${form.exp2Title} chez ${form.exp2Company} (${form.exp2Dates}) — ${form.exp2Desc}` : "aucune"}
-Formation: ${form.education}${form.education2 ? `, ${form.education2}` : ""}${form.education3 ? `, ${form.education3}` : ""}, Compétences: ${form.skills}, Poste cible: ${form.targetJob || form.title}
+Exp 3: ${form.exp3Title ? `${form.exp3Title} chez ${form.exp3Company} (${form.exp3Dates}) — ${form.exp3Desc}` : "aucune"}
+Formation: ${form.education}${form.education2 ? `, ${form.education2}` : ""}${form.education3 ? `, ${form.education3}` : ""}
+Compétences: ${form.skills}, Poste cible: ${form.targetJob || form.title}
 Réponds UNIQUEMENT en JSON valide sans backticks. Sois CONCIS : max 2 phrases pour le profil, max 3 bullet points courts par expérience, max 8 compétences:
-{"summary":"accroche 2-3 phrases avec mots-clés ATS","experiences":[{"title":"","company":"","dates":"","Description (quelques mots-clés suffisent)":"bullet points séparés par \\n• "}],"skills":["skill1","skill2"],"education":"formation formatée"}`;
+{"summary":"accroche 2 phrases max avec mots-clés ATS","experiences":[{"title":"","company":"","dates":"","description":"bullet points séparés par • "}],"skills":["skill1","skill2"],"education":"formation principale courte"}`;
 
     try {
-     const res = await fetch("/api/generate", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({ prompt }),
-});
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
       const data = await res.json();
-console.log("Data reçue:", JSON.stringify(data));
-const text = data.content?.find(b => b.type === "text")?.text || "";
-console.log("Text:", text);
-const clean = text.replace(/```json|```/g, "").trim();
-console.log("Clean:", clean);
-setCvData(JSON.parse(clean));
+      const text = data.content?.find(b => b.type === "text")?.text || "";
+      const clean = text.replace(/```json|```/g, "").trim();
+      setCvData(JSON.parse(clean));
     } catch (e) {
       setError("Erreur lors de la génération. Réessaie.");
     } finally {
@@ -141,7 +127,7 @@ setCvData(JSON.parse(clean));
   }
 
   function handlePay() {
-    window.location.href = "https://buy.stripe.com/test_eVq5kD4zCamicKlduJ77O00";
+    window.location.href = "https://buy.stripe.com/test_3csbMi1Rq1Px5d6144";
   }
 
   function doExport() {
@@ -151,39 +137,68 @@ setCvData(JSON.parse(clean));
       @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:wght@400;600&display=swap');
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: 'DM Sans', sans-serif; }
-      .cv { max-width: 700px; margin: 0 auto; }
-      .cv-header { background: #0f0e0d !important; color: #f5f2ec !important; padding: 40px 48px 32px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .cv-name { font-family: 'Instrument Serif', serif; font-size: 38px; margin-bottom: 4px; }
-      .cv-title { font-size: 14px; color: #a09890; margin-bottom: 16px; }
-      .cv-contacts { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #c8c0b8; }
-      .cv-body { padding: 36px 48px; }
-      .cv-section { margin-bottom: 28px; }
-      .cv-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #c8410a; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f4e8e2; }
-      .cv-text { font-size: 13.5px; line-height: 1.65; color: #3a3733; }
+      .cv { display: flex; min-height: 100vh; }
+      .cv-left { width: 35%; background: #1a1a2e; color: #f5f2ec; padding: 32px 24px; display: flex; flex-direction: column; gap: 24px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cv-right { flex: 1; background: #ffffff; padding: 32px 28px; display: flex; flex-direction: column; gap: 20px; }
+      .cv-firstname { font-family: 'Instrument Serif', serif; font-size: 22px; line-height: 1.2; }
+      .cv-lastname { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+      .cv-jobtitle { font-size: 11px; color: #c8410a; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+      .section-label-left { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #c8410a; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(200,65,10,0.3); }
+      .section-label-right { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #c8410a; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f4e8e2; }
+      .contact-item { font-size: 12px; margin-bottom: 6px; color: #d4cfc6; }
+      .edu-item { font-size: 12px; color: #d4cfc6; margin-bottom: 8px; line-height: 1.5; }
+      .skill-item { font-size: 12px; color: #d4cfc6; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+      .skill-dot { width: 4px; height: 4px; border-radius: 50%; background: #c8410a; flex-shrink: 0; display: inline-block; }
+      .summary { font-size: 13px; line-height: 1.6; color: #3a3733; }
       .exp-item { margin-bottom: 16px; }
-      .exp-header { display: flex; justify-content: space-between; }
-      .job-title { font-weight: 600; font-size: 14px; }
-      .job-date { font-size: 11px; color: #7a7469; }
-      .company { font-size: 12px; color: #7a7469; margin-bottom: 4px; }
-      .exp-desc { font-size: 12.5px; line-height: 1.6; white-space: pre-line; }
-      .skills-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
-      .skill-tag { background: #ede9e0; border: 1px solid #d4cfc6; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+      .exp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
+      .exp-title { font-weight: 600; font-size: 13px; color: #0f0e0d; }
+      .exp-date { font-size: 11px; color: #7a7469; }
+      .exp-company { font-size: 11px; color: #c8410a; margin-bottom: 6px; font-weight: 500; }
+      .exp-point { font-size: 12px; line-height: 1.6; color: #4a4643; margin-bottom: 3px; }
     </style></head><body>
     <div class="cv">
-      <div class="cv-header">
-        <div class="cv-name">${form.firstName} ${form.lastName}</div>
-        <div class="cv-title">${form.title}</div>
-        <div class="cv-contacts">
-          ${form.email ? `<span>${form.email}</span>` : ""}
-          ${form.phone ? `<span>${form.phone}</span>` : ""}
-          ${form.location ? `<span>${form.location}</span>` : ""}
+      <div class="cv-left">
+        <div>
+          <div class="cv-firstname">${form.firstName}</div>
+          <div class="cv-lastname">${form.lastName}</div>
+          <div class="cv-jobtitle">${form.title}</div>
         </div>
+        <div>
+          <div class="section-label-left">Contact</div>
+          ${form.phone ? `<div class="contact-item">📞 ${form.phone}</div>` : ""}
+          ${form.email ? `<div class="contact-item">✉ ${form.email}</div>` : ""}
+          ${form.location ? `<div class="contact-item">📍 ${form.location}</div>` : ""}
+        </div>
+        ${(form.education || form.education2 || form.education3) ? `
+        <div>
+          <div class="section-label-left">Formation</div>
+          ${form.education ? `<div class="edu-item">${form.education}</div>` : ""}
+          ${form.education2 ? `<div class="edu-item">${form.education2}</div>` : ""}
+          ${form.education3 ? `<div class="edu-item">${form.education3}</div>` : ""}
+        </div>` : ""}
+        ${cvData?.skills?.length ? `
+        <div>
+          <div class="section-label-left">Compétences</div>
+          ${cvData.skills.map(s => `<div class="skill-item"><span class="skill-dot"></span>${s}</div>`).join("")}
+        </div>` : ""}
       </div>
-      <div class="cv-body">
-        ${cvData?.summary ? `<div class="cv-section"><div class="cv-section-label">Profil</div><div class="cv-text">${cvData.summary}</div></div>` : ""}
-        ${cvData?.experiences?.length ? `<div class="cv-section"><div class="cv-section-label">Expériences</div>${cvData.experiences.map(e => `<div class="exp-item"><div class="exp-header"><span class="job-title">${e.title}</span><span class="job-date">${e.dates}</span></div><div class="company">${e.company}</div><div class="exp-desc">• ${e.description}</div></div>`).join("")}</div>` : ""}
-        ${cvData?.education ? `<div class="cv-section"><div class="cv-section-label">Formation</div><div class="cv-text">${cvData.education}</div></div>` : ""}
-        ${cvData?.skills?.length ? `<div class="cv-section"><div class="cv-section-label">Compétences</div><div class="skills-wrap">${cvData.skills.map(s => `<span class="skill-tag">${s}</span>`).join("")}</div></div>` : ""}
+      <div class="cv-right">
+        ${cvData?.summary ? `
+        <div>
+          <div class="section-label-right">Profil</div>
+          <div class="summary">${cvData.summary}</div>
+        </div>` : ""}
+        ${cvData?.experiences?.length ? `
+        <div>
+          <div class="section-label-right">Expériences</div>
+          ${cvData.experiences.map(e => `
+            <div class="exp-item">
+              <div class="exp-header"><span class="exp-title">${e.title}</span><span class="exp-date">${e.dates}</span></div>
+              <div class="exp-company">${e.company}</div>
+              ${e.description.split('•').filter(Boolean).map(p => `<div class="exp-point">• ${p.trim()}</div>`).join("")}
+            </div>`).join("")}
+        </div>` : ""}
       </div>
     </div>
     <script>window.onload=()=>{window.print();}<\/script>
@@ -192,6 +207,7 @@ setCvData(JSON.parse(clean));
   }
 
   const hasData = !!cvData;
+
   return (
     <>
       <style>{css}</style>
@@ -237,21 +253,23 @@ setCvData(JSON.parse(clean));
             <div className="form-row">
               <div className="form-group"><label>Période</label><input placeholder="Janv. 2021 – Juin 2021" value={form.exp2Dates} onChange={set("exp2Dates")} /></div>
               <div className="form-group"><label>Description (quelques mots-clés suffisent)</label><input placeholder="WordPress, PHP..." value={form.exp2Desc} onChange={set("exp2Desc")} /></div>
-            </div><div style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"var(--muted)",margin:"12px 0 12px"}}>Expérience 3 (optionnel)</div>
-<div className="form-row">
-  <div className="form-group"><label>Poste</label><input placeholder="Stage Administratif" value={form.exp3Title} onChange={set("exp3Title")} /></div>
-  <div className="form-group"><label>Entreprise</label><input placeholder="EntrepriseXYZ" value={form.exp3Company} onChange={set("exp3Company")} /></div>
-</div>
-<div className="form-row">
-  <div className="form-group"><label>Période</label><input placeholder="Janv. 2020 – Juin 2020" value={form.exp3Dates} onChange={set("exp3Dates")} /></div>
-  <div className="form-group"><label>Description (quelques mots-clés suffisent)</label><input placeholder="Excel, communication..." value={form.exp3Desc} onChange={set("exp3Desc")} /></div>
-</div>
+            </div>
+
+            <div style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"var(--muted)",margin:"12px 0 12px"}}>Expérience 3 (optionnel)</div>
+            <div className="form-row">
+              <div className="form-group"><label>Poste</label><input placeholder="Stage Administratif" value={form.exp3Title} onChange={set("exp3Title")} /></div>
+              <div className="form-group"><label>Entreprise</label><input placeholder="EntrepriseXYZ" value={form.exp3Company} onChange={set("exp3Company")} /></div>
+            </div>
+            <div className="form-row">
+              <div className="form-group"><label>Période</label><input placeholder="Janv. 2020 – Juin 2020" value={form.exp3Dates} onChange={set("exp3Dates")} /></div>
+              <div className="form-group"><label>Description (quelques mots-clés suffisent)</label><input placeholder="Excel, communication..." value={form.exp3Desc} onChange={set("exp3Desc")} /></div>
+            </div>
 
             <div className="divider" />
             <div className="form-group"><label>Formation</label><input placeholder="Licence Info, Univ. Paris — 2021" value={form.education} onChange={set("education")} /></div>
             <div className="form-group"><label>Formation 2 (optionnel)</label><input placeholder="BTS Commerce — 2019" value={form.education2} onChange={set("education2")} /></div>
-<div className="form-group"><label>Formation 3 (optionnel)</label><input placeholder="Baccalauréat — 2017" value={form.education3} onChange={set("education3")} /></div>
-            <div className="form-group"><label>Tes compétences (ex: Excel, PowerPoint, permis B)</label><input placeholder="Excel, Word, PowerPoint, permis B..." value={form.skills} onChange={set("skills")} /></div>
+            <div className="form-group"><label>Formation 3 (optionnel)</label><input placeholder="Baccalauréat — 2017" value={form.education3} onChange={set("education3")} /></div>
+            <div className="form-group"><label>Tes compétences</label><input placeholder="Excel, Word, PowerPoint, permis B..." value={form.skills} onChange={set("skills")} /></div>
             <div className="form-group"><label>Poste que tu recherches</label><input placeholder="Alternance Commerce Paris" value={form.targetJob} onChange={set("targetJob")} /></div>
 
             <button className="btn-generate" onClick={handleGenerate} disabled={isGenerating}>
@@ -275,7 +293,7 @@ setCvData(JSON.parse(clean));
                 <div className="empty-sub">Remplis le formulaire et clique sur "Générer"</div>
               </div>
             ) : (
-              <div style={{position:"relative",width:"100%",maxWidth:600}}>
+              <div style={{position:"relative", width:"100%", maxWidth:600}}>
                 {isGenerating && (
                   <div className="generating-overlay">
                     <div className="gen-spinner" />
@@ -284,39 +302,70 @@ setCvData(JSON.parse(clean));
                   </div>
                 )}
                 {hasData && (
-                  <div className="cv-doc">
-                    <div className="cv-header">
-                      <div className="cv-name">{form.firstName} {form.lastName}</div>
-                      <div className="cv-title-text">{form.title}</div>
-                      <div className="cv-contacts">
-                        {form.email && <span>✉ {form.email}</span>}
-                        {form.phone && <span>✆ {form.phone}</span>}
-                        {form.location && <span>◎ {form.location}</span>}
+                  <div style={{display:"flex", minHeight:"600px", boxShadow:"var(--shadow-lg)", borderRadius:"4px", overflow:"hidden"}}>
+                    {/* COLONNE GAUCHE */}
+                    <div style={{width:"35%", background:"#1a1a2e", color:"#f5f2ec", padding:"32px 20px", display:"flex", flexDirection:"column", gap:"20px"}}>
+                      <div>
+                        <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"20px", lineHeight:"1.2"}}>{form.firstName}</div>
+                        <div style={{fontFamily:"'Instrument Serif', serif", fontSize:"20px", fontWeight:"700", lineHeight:"1.2", marginBottom:"8px"}}>{form.lastName}</div>
+                        <div style={{fontSize:"10px", color:"#c8410a", textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:"600", lineHeight:"1.4"}}>{form.title}</div>
                       </div>
-                    </div>
-                    <div className="cv-body">
-                      {cvData.summary && <div><div className="cv-section-label">Profil</div><div className="cv-summary">{cvData.summary}</div></div>}
-                      {cvData.experiences?.length > 0 && (
+
+                      <div>
+                        <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"8px", paddingBottom:"5px", borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Contact</div>
+                        {form.phone && <div style={{fontSize:"11px", marginBottom:"5px", color:"#d4cfc6"}}>📞 {form.phone}</div>}
+                        {form.email && <div style={{fontSize:"11px", marginBottom:"5px", color:"#d4cfc6", wordBreak:"break-all"}}>✉ {form.email}</div>}
+                        {form.location && <div style={{fontSize:"11px", color:"#d4cfc6"}}>📍 {form.location}</div>}
+                      </div>
+
+                      {(form.education || form.education2 || form.education3) && (
                         <div>
-                          <div className="cv-section-label">Expériences</div>
-                          {cvData.experiences.map((exp, i) => (
-                            <div key={i} className="cv-exp-item">
-                              <div className="cv-exp-header"><span className="cv-job-title">{exp.title}</span><span className="cv-job-date">{exp.dates}</span></div>
-                              <div className="cv-company">{exp.company}</div>
-                              <div className="cv-exp-desc">
-  {exp.description.split('•').filter(Boolean).map((point, i) => (
-    <div key={i} style={{marginBottom: '4px'}}>• {point.trim()}</div>
-  ))}
-</div>
+                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"8px", paddingBottom:"5px", borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Formation</div>
+                          {form.education && <div style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"6px", lineHeight:"1.5"}}>{form.education}</div>}
+                          {form.education2 && <div style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"6px", lineHeight:"1.5"}}>{form.education2}</div>}
+                          {form.education3 && <div style={{fontSize:"11px", color:"#d4cfc6", lineHeight:"1.5"}}>{form.education3}</div>}
+                        </div>
+                      )}
+
+                      {cvData.skills?.length > 0 && (
+                        <div>
+                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"8px", paddingBottom:"5px", borderBottom:"1px solid rgba(200,65,10,0.3)"}}>Compétences</div>
+                          {cvData.skills.map((s, i) => (
+                            <div key={i} style={{fontSize:"11px", color:"#d4cfc6", marginBottom:"4px", display:"flex", alignItems:"center", gap:"5px"}}>
+                              <span style={{width:"3px", height:"3px", borderRadius:"50%", background:"#c8410a", flexShrink:0, display:"inline-block"}}></span>
+                              {s}
                             </div>
                           ))}
                         </div>
                       )}
-                      {cvData.education && <div><div className="cv-section-label">Formation</div><div className="cv-summary">{cvData.education}</div></div>}
-                      {cvData.skills?.length > 0 && (
+                    </div>
+
+                    {/* COLONNE DROITE */}
+                    <div style={{flex:1, background:"#ffffff", padding:"32px 24px", display:"flex", flexDirection:"column", gap:"18px"}}>
+                      {cvData.summary && (
                         <div>
-                          <div className="cv-section-label">Compétences</div>
-                          <div className="cv-skills-grid">{cvData.skills.map((s, i) => <span key={i} className="cv-skill-tag">{s}</span>)}</div>
+                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"8px", paddingBottom:"5px", borderBottom:"1px solid #f4e8e2"}}>Profil</div>
+                          <div style={{fontSize:"12px", lineHeight:"1.6", color:"#3a3733"}}>{cvData.summary}</div>
+                        </div>
+                      )}
+
+                      {cvData.experiences?.length > 0 && (
+                        <div>
+                          <div style={{fontSize:"9px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:"#c8410a", marginBottom:"10px", paddingBottom:"5px", borderBottom:"1px solid #f4e8e2"}}>Expériences</div>
+                          {cvData.experiences.map((exp, i) => (
+                            <div key={i} style={{marginBottom:"14px"}}>
+                              <div style={{display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"2px"}}>
+                                <span style={{fontWeight:"600", fontSize:"12px", color:"#0f0e0d"}}>{exp.title}</span>
+                                <span style={{fontSize:"10px", color:"#7a7469", whiteSpace:"nowrap", marginLeft:"8px"}}>{exp.dates}</span>
+                              </div>
+                              <div style={{fontSize:"10px", color:"#c8410a", marginBottom:"5px", fontWeight:"500"}}>{exp.company}</div>
+                              <div style={{fontSize:"11px", lineHeight:"1.6", color:"#4a4643"}}>
+                                {exp.description.split('•').filter(Boolean).map((point, j) => (
+                                  <div key={j} style={{marginBottom:"2px"}}>• {point.trim()}</div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -340,7 +389,7 @@ setCvData(JSON.parse(clean));
             </div>
             <div className="modal-features">
               <div className="modal-feature"><span className="check">✓</span> CV optimisé ATS par l'IA</div>
-              <div className="modal-feature"><span className="check">✓</span> Template professionnel</div>
+              <div className="modal-feature"><span className="check">✓</span> Template professionnel 2 colonnes</div>
               <div className="modal-feature"><span className="check">✓</span> PDF haute qualité imprimable</div>
               <div className="modal-feature"><span className="check">✓</span> Modifications illimitées</div>
             </div>
@@ -353,4 +402,3 @@ setCvData(JSON.parse(clean));
     </>
   );
 }
-
